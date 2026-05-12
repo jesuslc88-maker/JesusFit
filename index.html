@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d0d14">
+<meta name="description" content="JesusFit - Seguimiento nutricional personalizado">
+<link rel="manifest" href="manifest.json">
+<title>JesusFit · Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0d14;--s1:#151520;--s2:#1e1e2e;--s3:#26263a;--border:#2e2e45;
+  --text:#f0f0f8;--muted:#7070a0;--accent:#7c6dfa;--accent2:#fa6d9a;
+  --green:#2ecc8a;--amber:#f5a623;--blue:#4da6ff;--pink:#ff6db5;--r:14px;
+  --deficit:#ff6b35;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden}
+
+/* ── HEADER ── */
+.header{background:linear-gradient(135deg,#1a1040 0%,#0d1a30 50%,#1a0d30 100%);padding:16px 16px 12px;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border)}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-right{display:flex;align-items:center;gap:8px}
+.day-info{text-align:right}
+.day-name{font-size:12px;font-weight:600;color:var(--accent)}
+.day-type{font-size:10px;color:var(--muted)}
+
+/* MODE TOGGLE */
+.mode-toggle{display:flex;background:var(--s3);border-radius:20px;padding:3px;gap:2px;border:1px solid var(--border)}
+.mode-btn{padding:5px 12px;border-radius:16px;border:none;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .25s;color:var(--muted);background:none;white-space:nowrap}
+.mode-btn.active-normal{background:var(--accent);color:#fff}
+.mode-btn.active-deficit{background:var(--deficit);color:#fff}
+
+/* Day selector */
+.day-strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.day-strip::-webkit-scrollbar{display:none}
+.day-pill{flex-shrink:0;padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--s2);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--muted);white-space:nowrap}
+.day-pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.day-pill.active.deficit-mode{background:var(--deficit);border-color:var(--deficit)}
+.day-pill.rest{border-color:#555580}
+.day-pill.rest.active{background:#3a3a6a;border-color:#6060aa;color:#aaaadd}
+
+/* DEFICIT BANNER */
+.deficit-banner{background:linear-gradient(135deg,rgba(255,107,53,.15),rgba(250,109,154,.1));border-bottom:1px solid rgba(255,107,53,.3);padding:8px 16px;display:none;align-items:center;gap:8px}
+.deficit-banner.show{display:flex}
+.deficit-banner-icon{font-size:16px}
+.deficit-banner-text{font-size:12px;color:var(--deficit);font-weight:600}
+.deficit-banner-sub{font-size:10px;color:var(--muted);margin-left:auto}
+
+/* ── DASHBOARD ── */
+.dashboard{padding:12px 14px 8px}
+.macro-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.macro-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;position:relative;overflow:hidden}
+.macro-card.deficit-card{border-color:rgba(255,107,53,.3)}
+.macro-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.macro-row{display:flex;align-items:baseline;gap:4px}
+.macro-consumed{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--card-color);line-height:1}
+.macro-unit{font-size:12px;color:var(--muted);font-weight:500}
+.prog{height:4px;background:var(--s3);border-radius:2px;margin-top:7px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;transition:width .5s ease;background:var(--card-color)}
+.macro-remaining{font-size:11px;margin-top:4px;font-weight:500}
+.full-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;display:flex;justify-content:space-between;align-items:center}
+.full-label{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px}
+.full-vals{display:flex;gap:14px}
+.full-val{text-align:right}
+.full-num{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text)}
+.full-unit{font-size:10px;color:var(--muted)}
+
+.reset-btn{display:block;width:calc(100% - 28px);margin:6px 14px 8px;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
+
+/* ── SECTIONS ── */
+.section{margin:0 14px 14px}
+.section-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:7px;border-bottom:2px solid var(--section-color)}
+.section-emoji{font-size:17px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--section-color)}
+.section-hint{font-size:10px;color:var(--muted);margin-left:auto;font-style:italic}
+
+/* ── OPTION CARDS ── */
+.options-grid{display:flex;flex-direction:column;gap:5px}
+.option-card{background:var(--s1);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:9px;position:relative;overflow:hidden}
+.option-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--section-color);opacity:.35;transition:opacity .2s}
+.option-card.selected{border-color:var(--section-color);background:var(--s2)}
+.option-card.selected::before{opacity:1}
+.option-card:active{transform:scale(.98)}
+.opt-badge{width:26px;height:26px;border-radius:7px;flex-shrink:0;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);transition:all .2s}
+.option-card.selected .opt-badge{background:var(--section-color);color:#fff}
+.opt-body{flex:1;min-width:0}
+.opt-name{font-size:12px;font-weight:600;line-height:1.3;margin-bottom:4px}
+.opt-macros{display:flex;gap:6px;flex-wrap:wrap}
+.opt-macro{font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px}
+.opt-macro.k{background:rgba(46,204,138,.12);color:var(--green)}
+.opt-macro.p{background:rgba(77,166,255,.12);color:var(--blue)}
+.opt-macro.f{background:rgba(255,109,181,.12);color:var(--pink)}
+.opt-macro.c{background:rgba(245,166,35,.12);color:var(--amber)}
+.opt-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:10px}
+.option-card.selected .opt-check{background:var(--section-color);border-color:var(--section-color);color:#fff}
+.cat-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:9px 0 5px;padding-left:2px}
+.cat-label:first-child{margin-top:0}
+
+/* Deficit badge on cards */
+.deficit-badge{font-size:9px;background:rgba(255,107,53,.15);color:var(--deficit);border:1px solid rgba(255,107,53,.3);border-radius:4px;padding:1px 5px;margin-left:4px;font-weight:700}
+
+.free-items{background:rgba(46,204,138,.05);border:1px dashed rgba(46,204,138,.25);border-radius:var(--r);padding:9px 12px;margin-top:5px}
+.free-title{font-size:10px;font-weight:700;color:var(--green);margin-bottom:5px;text-transform:uppercase;letter-spacing:.8px}
+.free-item{font-size:11px;color:var(--muted);padding:2px 0;display:flex;align-items:center;gap:5px}
+.free-item::before{content:'✓';color:var(--green);font-weight:700;font-size:10px}
+
+.libre-note{background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(250,109,154,.08));border:1px solid rgba(245,166,35,.3);border-radius:var(--r);padding:16px;text-align:center;margin-top:8px}
+.libre-note-icon{font-size:30px;margin-bottom:6px}
+.libre-note-text{font-size:13px;font-weight:600;color:var(--amber)}
+.libre-note-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+.supp-note{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;margin:8px 14px 14px}
+.supp-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.supp-row:last-child{border-bottom:none}
+.supp-name{color:var(--text);font-weight:500}
+.supp-time{color:var(--muted);font-size:10px}
+
+/* ── EXTRAS ── */
+.extras-grid{display:flex;flex-direction:column;gap:5px}
+.extra-card{background:var(--s1);border:1.5px solid var(--border);border-radius:var(--r);padding:9px 12px;display:flex;align-items:center;gap:9px;position:relative;overflow:hidden}
+.extra-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#34d399;opacity:.35}
+.extra-card.active::before{opacity:1}
+.extra-card.active{border-color:#34d399;background:var(--s2)}
+.extra-body{flex:1;min-width:0}
+.extra-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.extra-counter{display:flex;align-items:center;gap:0;flex-shrink:0}
+.extra-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--border);background:var(--s3);color:var(--text);font-size:17px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1;font-family:'Space Grotesk',sans-serif}
+.extra-btn:active{transform:scale(.9)}
+.extra-btn.plus{border-color:#34d399;color:#34d399}
+.extra-btn.minus{border-color:var(--accent2);color:var(--accent2)}
+.extra-count{min-width:26px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:#34d399;line-height:1}
+.extras-total{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25);border-radius:var(--r);padding:9px 13px;margin-top:7px;display:flex;justify-content:space-between;align-items:center}
+.extras-total-label{font-size:11px;font-weight:600;color:#34d399;text-transform:uppercase;letter-spacing:.8px}
+.extras-total-vals{display:flex;gap:9px}
+.extras-total-val{font-size:12px;font-weight:700}
+
+.bottom-pad{height:24px}
+@keyframes slideIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.section{animation:slideIn .2s ease forwards}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="logo">JesusFit</div>
+    <div class="header-right">
+      <div class="mode-toggle">
+        <button class="mode-btn active-normal" id="btnNormal" onclick="setMode('normal')">Normal</button>
+        <button class="mode-btn" id="btnDeficit" onclick="setMode('deficit')">🔥 Déficit</button>
+      </div>
+      <div class="day-info">
+        <div class="day-name" id="dayName">LUNES</div>
+        <div class="day-type" id="dayType">💪 Entrenamiento</div>
+      </div>
+    </div>
+  </div>
+  <div class="day-strip" id="dayStrip"></div>
+</div>
+
+<div class="deficit-banner" id="deficitBanner">
+  <span class="deficit-banner-icon">🔥</span>
+  <span class="deficit-banner-text">MODO DÉFICIT JUNIO — Plan agresivo de definición</span>
+  <span class="deficit-banner-sub">~16.5% grasa objetivo</span>
+</div>
+
+<div class="dashboard">
+  <div class="macro-grid">
+    <div class="macro-card" id="cardKcal" style="--card-color:var(--green)">
+      <div class="macro-label">Calorías</div>
+      <div class="macro-row"><div class="macro-consumed" id="mKcal">0</div><div class="macro-unit">/ <span id="tKcal">2000</span> kcal</div></div>
+      <div class="prog"><div class="prog-fill" id="pKcal" style="width:0%"></div></div>
+      <div class="macro-remaining" style="color:var(--green)" id="rKcalEl">Restan: 2000 kcal</div>
+    </div>
+    <div class="macro-card" id="cardProt" style="--card-color:var(--blue)">
+      <div class="macro-label">Proteína</div>
+      <div class="macro-row"><div class="macro-consumed" id="mProt">0</div><div class="macro-unit">/ <span id="tProt">165</span> g</div></div>
+      <div class="prog"><div class="prog-fill" id="pProt" style="width:0%"></div></div>
+      <div class="macro-remaining" style="color:var(--blue)" id="rProtEl">Restan: 165 g</div>
+    </div>
+  </div>
+  <div class="full-card">
+    <div class="full-label">Grasa / Carbos</div>
+    <div class="full-vals">
+      <div class="full-val"><div class="full-num" style="color:var(--pink)" id="mFat">0<span style="font-size:13px">g</span></div><div class="full-unit">/ <span id="tFat">60</span>g grasa</div></div>
+      <div class="full-val"><div class="full-num" style="color:var(--amber)" id="mCarb">0<span style="font-size:13px">g</span></div><div class="full-unit">/ <span id="tCarb">190</span>g carbos</div></div>
+    </div>
+  </div>
+</div>
+
+<button class="reset-btn" onclick="resetDay()">↺ Reiniciar selección del día</button>
+<div id="content"></div>
+<div class="bottom-pad"></div>
+
+<script>
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const DAYS = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+const DAY_SHORT = ["L","Ma","Mi","J","V","S","D"];
+const IS_REST = [false,false,true,false,false,true,false];
+
+const TARGETS = {
+  normal: {
+    train: {kcal:2000,prot:165,fat:60,carb:190},
+    rest:  {kcal:1750,prot:155,fat:55,carb:140},
+    sat:   {kcal:900, prot:95, fat:30,carb:95},
+  },
+  deficit: {
+    train: {kcal:1800,prot:185,fat:50,carb:140},
+    rest:  {kcal:1600,prot:175,fat:45,carb:110},
+    sat:   {kcal:800, prot:100,fat:25,carb:70},
+  }
+};
+
+// ─── MENU DATA — NORMAL MODE ──────────────────────────────────────────────────
+const MENU_NORMAL = {
+  desayuno:{label:"DESAYUNO",emoji:"🌅",color:"#f5a623",singleSelect:true,cats:[{label:"Elige UNA opción:",opts:[
+    {id:"DA",name:"3 huevos + 1 tostada pan integral (30g) + plátano (120g)",kcal:304,prot:14,fat:10,carb:41},
+    {id:"DB",name:"3 huevos + 1 tostada pan integral (30g) + manzana (150g)",kcal:274,prot:14,fat:10,carb:30},
+    {id:"DC",name:"3 huevos + jamón york (50g) + plátano (120g)",kcal:288,prot:20,fat:11,carb:29},
+    {id:"DD",name:"Yogur líquido (265g) + plátano (120g) + corn flakes (30g)",kcal:390,prot:28,fat:2,carb:65},
+    {id:"DE",name:"Yogur líquido (265g) + manzana (150g) + corn flakes (30g)",kcal:360,prot:28,fat:2,carb:52},
+    {id:"DF",name:"Yogur líquido (265g) + plátano (120g)",kcal:282,prot:26,fat:2,carb:41},
+  ]}]},
+  media:{label:"MEDIA MAÑANA",emoji:"☕",color:"#a06dfa",singleSelect:true,cats:[{label:"Elige UNA opción:",opts:[
+    {id:"MA",name:"Yogur líquido (265g) + manzana (150g)",kcal:253,prot:25,fat:2,carb:34},
+    {id:"MB",name:"Yogur líquido (265g) + plátano (120g)",kcal:282,prot:26,fat:2,carb:41},
+    {id:"MC",name:"Yogur líquido (265g) solo",kcal:175,prot:25,fat:2,carb:13},
+    {id:"MD",name:"2 huevos duros + manzana (150g)",kcal:218,prot:13,fat:10,carb:14},
+  ]}]},
+  comida:{label:"COMIDA",emoji:"🍽️",color:"#4da6ff",singleSelect:false,
+    cats:[
+      {label:"PROTEÍNA — Elige una:",singleSelect:true,group:"comida_prot",opts:[
+        {id:"CP1",name:"Pechuga de pollo (180g crudo)",kcal:198,prot:41,fat:3,carb:0},
+        {id:"CP2",name:"Contramuslo pollo sin piel (180g crudo)",kcal:270,prot:34,fat:14,carb:0},
+        {id:"CP3",name:"Ternera magra (180g crudo)",kcal:234,prot:38,fat:9,carb:0},
+        {id:"CP4",name:"Carne picada ternera 5% (180g crudo)",kcal:261,prot:36,fat:9,carb:0},
+        {id:"CP5",name:"Carne picada pollo (180g crudo)",kcal:216,prot:36,fat:8,carb:0},
+        {id:"CP6",name:"4 huevos (220g crudo)",kcal:314,prot:28,fat:21,carb:3},
+      ]},
+      {label:"CARBOHIDRATO — Elige uno:",singleSelect:true,group:"comida_carb",opts:[
+        {id:"CC1",name:"Pasta integral (75g crudo → ~170g cocida)",kcal:263,prot:10,fat:2,carb:50},
+        {id:"CC2",name:"Pasta integral (60g crudo → ~140g cocida)",kcal:210,prot:8,fat:2,carb:40},
+        {id:"CC3",name:"Arroz blanco (70g crudo → ~200g cocido)",kcal:252,prot:5,fat:0,carb:55},
+        {id:"CC4",name:"Arroz blanco (55g crudo → ~160g cocido)",kcal:198,prot:4,fat:0,carb:44},
+        {id:"CC5",name:"Patata (200g crudo)",kcal:154,prot:4,fat:0,carb:34},
+        {id:"CC6",name:"Patata (150g crudo)",kcal:116,prot:3,fat:0,carb:26},
+      ]},
+    ],
+    free:["Ensalada (lechuga+tomate+pepino) — libre","Salsa tomate tamizado o albahaca (100–150g)","Aceite de oliva 10ml"]
+  },
+  post:{label:"POST-ENTRENO / MERIENDA",emoji:"💪",color:"#2ecc8a",singleSelect:true,cats:[
+    {label:"Días de entrenamiento:",opts:[
+      {id:"PA",name:"Whey 1 scoop + Creatina 5g + plátano (90g)",kcal:200,prot:25,fat:2,carb:24},
+      {id:"PB",name:"Whey 1 scoop + Creatina 5g + manzana (150g)",kcal:198,prot:25,fat:2,carb:22},
+      {id:"PC",name:"Whey 1 scoop + Creatina 5g (solo agua)",kcal:120,prot:24,fat:2,carb:3},
+    ]},
+    {label:"Días de descanso:",opts:[
+      {id:"PD",name:"Whey 1 scoop + Creatina 5g + plátano (90g)",kcal:200,prot:25,fat:2,carb:24},
+      {id:"PE",name:"Yogur líquido (265g) + manzana (150g)",kcal:253,prot:25,fat:2,carb:34},
+    ]},
+  ]},
+  cena:{label:"CENA",emoji:"🌙",color:"#fa6d9a",singleSelect:false,
+    cats:[
+      {label:"PROTEÍNA — Elige una:",singleSelect:true,group:"cena_prot",opts:[
+        {id:"DP1",name:"Atún al natural 2 latas (160g escurrido)",kcal:160,prot:37,fat:1,carb:0},
+        {id:"DP2",name:"Sardinas aceite oliva 1 lata (90g escurrido)",kcal:198,prot:18,fat:14,carb:0},
+        {id:"DP3",name:"Sardinas aceite bien escurridas",kcal:150,prot:18,fat:9,carb:0},
+        {id:"DP4",name:"Carne picada ternera + boloñesa (150g crudo)",kcal:261,prot:30,fat:9,carb:0},
+        {id:"DP5",name:"Pechuga de pollo plancha (150g crudo)",kcal:165,prot:34,fat:2,carb:0},
+        {id:"DP6",name:"4 huevos tortilla/revueltos (220g crudo)",kcal:314,prot:28,fat:21,carb:3},
+        {id:"DP7",name:"Carne picada pollo + tomate (150g crudo)",kcal:180,prot:30,fat:7,carb:0},
+      ]},
+      {label:"CARBOHIDRATO — Elige uno (o ninguno):",singleSelect:true,group:"cena_carb",opts:[
+        {id:"DC1",name:"Pasta integral (40g crudo → ~90g cocida)",kcal:140,prot:5,fat:1,carb:27},
+        {id:"DC2",name:"Pasta integral (50g crudo → ~115g cocida)",kcal:175,prot:7,fat:1,carb:34},
+        {id:"DC3",name:"Arroz blanco (40g crudo → ~115g cocido)",kcal:144,prot:3,fat:0,carb:32},
+        {id:"DC4",name:"Arroz blanco (50g crudo → ~145g cocido)",kcal:180,prot:4,fat:0,carb:40},
+        {id:"DC5",name:"Patata (100g crudo)",kcal:77,prot:2,fat:0,carb:17},
+        {id:"DC6",name:"Sin carbohidrato — solo proteína + ensalada",kcal:0,prot:0,fat:0,carb:0},
+      ]},
+    ],
+    free:["Ensalada (lechuga+tomate+pepino) — libre","Salsa tomate (100–150g)","Aceite de oliva 5–10ml"]
+  }
+};
+
+// ─── MENU DATA — DEFICIT MODE (Junio) ────────────────────────────────────────
+// Higher protein, lower carbs, smaller portions
+const MENU_DEFICIT = {
+  desayuno:{label:"DESAYUNO",emoji:"🌅",color:"#ff6b35",singleSelect:true,cats:[{label:"Elige UNA opción (porciones reducidas):",opts:[
+    {id:"DA",name:"3 huevos + jamón york (50g) + manzana (150g)",kcal:252,prot:20,fat:11,carb:16,deficit:true},
+    {id:"DB",name:"3 huevos + jamón york (50g) — sin fruta",kcal:181,prot:19,fat:11,carb:1,deficit:true},
+    {id:"DC",name:"Yogur líquido (265g) + manzana (150g)",kcal:253,prot:25,fat:2,carb:34,deficit:true},
+    {id:"DD",name:"Yogur líquido (265g) + plátano (90g)",kcal:255,prot:25,fat:2,carb:35,deficit:true},
+    {id:"DE",name:"4 huevos + jamón york (50g)",kcal:265,prot:33,fat:15,carb:1,deficit:true},
+  ]}]},
+  media:{label:"MEDIA MAÑANA",emoji:"☕",color:"#ff8c42",singleSelect:true,cats:[{label:"Elige UNA opción (alta proteína):",opts:[
+    {id:"MA",name:"Yogur líquido (265g) + manzana (150g)",kcal:253,prot:25,fat:2,carb:34,deficit:true},
+    {id:"MB",name:"Yogur líquido (265g) solo",kcal:175,prot:25,fat:2,carb:13,deficit:true},
+    {id:"MC",name:"2 huevos duros + jamón york (30g)",kcal:188,prot:20,fat:11,carb:1,deficit:true},
+    {id:"MD",name:"Atún 1 lata (80g) + manzana (150g)",kcal:158,prot:21,fat:1,carb:14,deficit:true},
+  ]}]},
+  comida:{label:"COMIDA",emoji:"🍽️",color:"#ff6b35",singleSelect:false,
+    cats:[
+      {label:"PROTEÍNA — Elige una (raciones aumentadas):",singleSelect:true,group:"comida_prot",opts:[
+        {id:"CP1",name:"Pechuga de pollo (200g crudo)",kcal:220,prot:46,fat:3,carb:0,deficit:true},
+        {id:"CP2",name:"Ternera magra (200g crudo)",kcal:260,prot:42,fat:10,carb:0,deficit:true},
+        {id:"CP3",name:"Carne picada ternera 5% (200g crudo)",kcal:290,prot:40,fat:10,carb:0,deficit:true},
+        {id:"CP4",name:"Atún al natural 2 latas (160g escurrido)",kcal:160,prot:37,fat:1,carb:0,deficit:true},
+        {id:"CP5",name:"Pechuga de pollo (180g) + 2 huevos",kcal:338,prot:55,fat:13,carb:1,deficit:true},
+      ]},
+      {label:"CARBOHIDRATO — Porciones reducidas:",singleSelect:true,group:"comida_carb",opts:[
+        {id:"CC1",name:"Pasta integral (50g crudo → ~115g cocida)",kcal:175,prot:7,fat:1,carb:34,deficit:true},
+        {id:"CC2",name:"Arroz blanco (50g crudo → ~145g cocido)",kcal:180,prot:4,fat:0,carb:40,deficit:true},
+        {id:"CC3",name:"Patata (150g crudo)",kcal:116,prot:3,fat:0,carb:26,deficit:true},
+        {id:"CC4",name:"Sin carbohidrato — máximo déficit",kcal:0,prot:0,fat:0,carb:0,deficit:true},
+      ]},
+    ],
+    free:["Ensalada grande — libre y sin límite","Salsa tomate tamizado (150g)","Aceite de oliva 5ml (reducido)"]
+  },
+  post:{label:"POST-ENTRENO / MERIENDA",emoji:"💪",color:"#2ecc8a",singleSelect:true,cats:[
+    {label:"Días de entrenamiento (alta proteína):",opts:[
+      {id:"PA",name:"Whey 1 scoop + Creatina 5g + manzana (150g)",kcal:198,prot:25,fat:2,carb:22,deficit:true},
+      {id:"PB",name:"Whey 1 scoop + Creatina 5g (solo agua)",kcal:120,prot:24,fat:2,carb:3,deficit:true},
+      {id:"PC",name:"Whey 1.5 scoops + Creatina 5g (agua)",kcal:180,prot:36,fat:3,carb:4,deficit:true},
+    ]},
+    {label:"Días de descanso:",opts:[
+      {id:"PD",name:"Whey 1 scoop + Creatina 5g (agua)",kcal:120,prot:24,fat:2,carb:3,deficit:true},
+      {id:"PE",name:"Yogur líquido (265g) solo",kcal:175,prot:25,fat:2,carb:13,deficit:true},
+    ]},
+  ]},
+  cena:{label:"CENA",emoji:"🌙",color:"#fa6d9a",singleSelect:false,
+    cats:[
+      {label:"PROTEÍNA — Elige una (raciones altas):",singleSelect:true,group:"cena_prot",opts:[
+        {id:"DP1",name:"Atún al natural 2 latas (160g escurrido)",kcal:160,prot:37,fat:1,carb:0,deficit:true},
+        {id:"DP2",name:"Pechuga de pollo plancha (180g crudo)",kcal:198,prot:41,fat:3,carb:0,deficit:true},
+        {id:"DP3",name:"Ternera magra plancha (170g crudo)",kcal:221,prot:36,fat:9,carb:0,deficit:true},
+        {id:"DP4",name:"Sardinas aceite bien escurridas (90g)",kcal:150,prot:18,fat:9,carb:0,deficit:true},
+        {id:"DP5",name:"4 huevos tortilla + jamón york (50g)",kcal:364,prot:42,fat:23,carb:1,deficit:true},
+        {id:"DP6",name:"Carne picada ternera + boloñesa (160g crudo)",kcal:278,prot:32,fat:10,carb:0,deficit:true},
+      ]},
+      {label:"CARBOHIDRATO — Opcional (mejor sin él en déficit):",singleSelect:true,group:"cena_carb",opts:[
+        {id:"DC1",name:"Sin carbohidrato ✓ recomendado en déficit",kcal:0,prot:0,fat:0,carb:0,deficit:true},
+        {id:"DC2",name:"Patata (80g crudo) — si lo necesitas",kcal:62,prot:2,fat:0,carb:14,deficit:true},
+        {id:"DC3",name:"Arroz blanco (30g crudo → ~85g cocido)",kcal:108,prot:2,fat:0,carb:24,deficit:true},
+      ]},
+    ],
+    free:["Ensalada grande — sin límite, ayuda a la saciedad","Salsa tomate tamizado (150g)","Aceite de oliva 5ml (solo 5ml en déficit)"]
+  }
+};
+
+// ─── EXTRAS ──────────────────────────────────────────────────────────────────
+const EXTRAS = [
+  {id:"EX1", name:"Vaso leche semidesnatada (200ml)",         kcal:92,  prot:6.4,fat:3.2,carb:9.4, emoji:"🥛"},
+  {id:"EX2", name:"Aguacate (100g)",                           kcal:160, prot:2.0,fat:15.0,carb:2.0,emoji:"🥑"},
+  {id:"EX3", name:"Aguacate (50g — medio pequeño)",            kcal:80,  prot:1.0,fat:7.5,carb:1.0, emoji:"🥑"},
+  {id:"EX4", name:"Aceite de oliva — 1 cda (10ml)",            kcal:88,  prot:0.0,fat:10.0,carb:0.0,emoji:"🫒"},
+  {id:"EX5", name:"Tomate tamizado (100g)",                    kcal:35,  prot:1.4,fat:0.2,carb:6.6, emoji:"🍅"},
+  {id:"EX6", name:"Salsa albahaca datterino (100g)",           kcal:34,  prot:1.1,fat:0.5,carb:5.8, emoji:"🍅"},
+  {id:"EX7", name:"Nueces al natural (30g — puñado)",          kcal:196, prot:4.6,fat:19.5,carb:1.2,emoji:"🌰"},
+  {id:"EX8", name:"Nueces al natural (15g — puñado pequeño)", kcal:98,  prot:2.3,fat:9.8,carb:0.6, emoji:"🌰"},
+  {id:"EX9", name:"Vinagre de Módena (15ml — chorrito)",       kcal:18,  prot:0.1,fat:0.0,carb:4.2, emoji:"🍶"},
+  {id:"EX10",name:"Café con leche (100ml leche semidenat.)",   kcal:46,  prot:3.2,fat:1.6,carb:4.7, emoji:"☕"},
+  {id:"EX11",name:"Queso rallado (20g)",                       kcal:76,  prot:5.4,fat:6.0,carb:0.2, emoji:"🧀"},
+  {id:"EX12",name:"Almendras (20g — puñado)",                  kcal:116, prot:4.2,fat:10.0,carb:2.2,emoji:"🫘"},
+  {id:"EX13",name:"Plátano extra (120g)",                      kcal:107, prot:1.3,fat:0.3,carb:27.6,emoji:"🍌"},
+  {id:"EX14",name:"Manzana extra (150g)",                      kcal:78,  prot:0.5,fat:0.3,carb:21.0,emoji:"🍎"},
+  {id:"EX15",name:"Pan integral extra (1 rebanada 30g)",       kcal:66,  prot:2.5,fat:0.8,carb:12.0,emoji:"🍞"},
+  {id:"EX16",name:"Huevo extra (1 ud 55g crudo)",              kcal:79,  prot:6.9,fat:5.2,carb:0.4, emoji:"🥚"},
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentDay = (new Date().getDay()+6)%7;
+let currentMode = 'normal'; // 'normal' | 'deficit'
+
+const gs = (k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}};
+const ss = (k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+
+let daySelections = gs("jf2_sel",{});
+let dayExtras     = gs("jf2_ext",{});
+
+function getMenu(){ return currentMode==='deficit' ? MENU_DEFICIT : MENU_NORMAL; }
+function getTarget(){
+  const t = TARGETS[currentMode];
+  if(currentDay===5) return t.sat;
+  if(IS_REST[currentDay]) return t.rest;
+  return t.train;
+}
+function selKey(){ return `${currentDay}_${currentMode}`; }
+function extKey(){ return `${currentDay}_ext`; }
+
+// ─── CALC ─────────────────────────────────────────────────────────────────────
+function calcTotals(){
+  const sel = daySelections[selKey()]||{};
+  const ext = dayExtras[extKey()]||{};
+  let k=0,p=0,f=0,c=0;
+  const menu = getMenu();
+  Object.values(menu).forEach(section=>{
+    section.cats.forEach(cat=>{
+      cat.opts.forEach(opt=>{
+        if(sel[opt.id]){k+=opt.kcal;p+=opt.prot;f+=opt.fat;c+=opt.carb;}
+      });
+    });
+  });
+  EXTRAS.forEach(ex=>{
+    const n=ext[ex.id]||0;
+    if(n>0){k+=ex.kcal*n;p+=ex.prot*n;f+=ex.fat*n;c+=ex.carb*n;}
+  });
+  return {kcal:Math.round(k),prot:Math.round(p*10)/10,fat:Math.round(f*10)/10,carb:Math.round(c*10)/10};
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function renderDayStrip(){
+  const strip = document.getElementById("dayStrip");
+  strip.innerHTML = DAYS.map((d,i)=>`
+    <div class="day-pill ${i===currentDay?"active":""} ${i===currentDay&&currentMode==="deficit"?"deficit-mode":""} ${IS_REST[i]?"rest":""}"
+         onclick="switchDay(${i})">
+      ${DAY_SHORT[i]}
+    </div>`).join("");
+}
+
+function renderHeader(){
+  const isRest = IS_REST[currentDay];
+  const isSat  = currentDay===5;
+  document.getElementById("dayName").textContent = DAYS[currentDay].toUpperCase();
+  document.getElementById("dayType").textContent =
+    isSat ? "😴 Descanso + 🍕 Libre" :
+    isRest? "😴 Día de descanso" : "💪 Entrenamiento";
+  // Mode buttons
+  document.getElementById("btnNormal").className = "mode-btn"+(currentMode==="normal"?" active-normal":"");
+  document.getElementById("btnDeficit").className= "mode-btn"+(currentMode==="deficit"?" active-deficit":"");
+  // Deficit banner
+  document.getElementById("deficitBanner").className = "deficit-banner"+(currentMode==="deficit"?" show":"");
+}
+
+function updateDashboard(){
+  const t = getTarget();
+  const v = calcTotals();
+  const isDeficit = currentMode==="deficit";
+
+  document.getElementById("tKcal").textContent = t.kcal;
+  document.getElementById("tProt").textContent = t.prot;
+  document.getElementById("tFat").textContent  = t.fat;
+  document.getElementById("tCarb").textContent = t.carb;
+
+  document.getElementById("mKcal").textContent = v.kcal;
+  document.getElementById("mProt").textContent = v.prot;
+  document.getElementById("mFat").innerHTML  = v.fat+'<span style="font-size:13px">g</span>';
+  document.getElementById("mCarb").innerHTML = v.carb+'<span style="font-size:13px">g</span>';
+
+  document.getElementById("pKcal").style.width = Math.min(100,(v.kcal/t.kcal)*100)+"%";
+  document.getElementById("pProt").style.width = Math.min(100,(v.prot/t.prot)*100)+"%";
+
+  const kcalOver = v.kcal>t.kcal;
+  const protOver = v.prot>t.prot;
+  const kcalColor = kcalOver?"var(--accent2)":(isDeficit?"var(--deficit)":"var(--green)");
+  const protColor = protOver?"var(--accent2)":"var(--blue)";
+
+  document.getElementById("rKcalEl").style.color = kcalColor;
+  document.getElementById("rProtEl").style.color  = protColor;
+  document.getElementById("rKcalEl").textContent  = kcalOver?`¡+${v.kcal-t.kcal} kcal sobre obj.`:`Restan: ${Math.max(0,t.kcal-v.kcal)} kcal`;
+  document.getElementById("rProtEl").textContent  = protOver?`¡+${Math.round(v.prot-t.prot)}g sobre obj.`:`Restan: ${Math.max(0,t.prot-v.prot)}g`;
+
+  // Card border in deficit
+  document.querySelectorAll(".macro-card,.full-card").forEach(el=>{
+    el.style.borderColor = isDeficit?"rgba(255,107,53,.3)":"";
+  });
+  document.getElementById("pKcal").style.background = isDeficit?"var(--deficit)":"var(--green)";
+}
+
+function renderContent(){
+  const content = document.getElementById("content");
+  const isSat  = currentDay===5;
+  const isRest = IS_REST[currentDay];
+  const isDeficit = currentMode==="deficit";
+  const sel = daySelections[selKey()]||{};
+  const ext = dayExtras[extKey()]||{};
+  const menu = getMenu();
+  const sectionColor = isDeficit?"var(--deficit)":"";
+
+  let html = "";
+
+  // Supplements
+  html += `<div class="supp-note">
+    <div class="supp-row"><span class="supp-name">💊 Pastillas</span><span class="supp-time">Con el desayuno</span></div>
+    ${!isRest?`<div class="supp-row"><span class="supp-name">🦴 Colágeno 10g + Vit C</span><span class="supp-time">30–45min pre-entreno</span></div>`:""}
+    <div class="supp-row"><span class="supp-name">⚡ Creatina 5g</span><span class="supp-time">Con el batido de Whey</span></div>
+    ${isDeficit&&!isRest?`<div class="supp-row"><span class="supp-name" style="color:var(--deficit)">🏃 LISS cardio post-entreno</span><span class="supp-time">20–25 min bici/paseo rápido</span></div>`:""}
+  </div>`;
+
+  // Menu sections
+  Object.entries(menu).forEach(([sectionKey,section])=>{
+    html += `<div class="section" style="--section-color:${section.color}">
+      <div class="section-header">
+        <span class="section-emoji">${section.emoji}</span>
+        <span class="section-title">${section.label}</span>
+        <span class="section-hint">${section.singleSelect?"elige 1":"elige 1 por categoría"}</span>
+      </div>
+      <div class="options-grid">`;
+
+    section.cats.forEach(cat=>{
+      html += `<div class="cat-label">${cat.label}</div>`;
+      cat.opts.forEach(opt=>{
+        const isSel = sel[opt.id];
+        html += `<div class="option-card ${isSel?"selected":""}"
+          onclick="toggleOpt('${sectionKey}','${opt.id}','${cat.group||sectionKey}',${!!(cat.singleSelect||section.singleSelect)})"
+          style="--section-color:${section.color}">
+          <div class="opt-badge">${opt.id.replace(/^[A-Z]+/,"")}</div>
+          <div class="opt-body">
+            <div class="opt-name">${opt.name}${opt.deficit&&isDeficit?'<span class="deficit-badge">DÉFICIT</span>':""}</div>
+            <div class="opt-macros">
+              <span class="opt-macro k">${opt.kcal}kcal</span>
+              <span class="opt-macro p">${opt.prot}g P</span>
+              <span class="opt-macro f">${opt.fat}g G</span>
+              <span class="opt-macro c">${opt.carb}g C</span>
+            </div>
+          </div>
+          <div class="opt-check">${isSel?"✓":""}</div>
+        </div>`;
+      });
+    });
+
+    if(section.free){
+      html += `<div class="free-items">
+        <div class="free-title">Incluir siempre (libre):</div>
+        ${section.free.map(f=>`<div class="free-item">${f}</div>`).join("")}
+      </div>`;
+    }
+    html += `</div></div>`;
+  });
+
+  // Saturday libre
+  if(isSat){
+    html += `<div class="section"><div class="libre-note">
+      <div class="libre-note-icon">🍕</div>
+      <div class="libre-note-text">${isDeficit?"⚠️ En modo déficit: cena más controlada":"¡Cena libre esta noche!"}</div>
+      <div class="libre-note-sub">${isDeficit?"Prefiere opciones más ligeras como sushi o pollo a la plancha. Evita pizza y cervezas este mes.":"Pizza / Hamburguesa / Sushi / Lo que surja<br>Desayuno y comida ya son más ligeros."}</div>
+    </div></div>`;
+  }
+
+  // Extras
+  let extKcal=0,extProt=0,extFat=0,extCarb=0;
+  EXTRAS.forEach(ex=>{const n=ext[ex.id]||0;extKcal+=ex.kcal*n;extProt+=ex.prot*n;extFat+=ex.fat*n;extCarb+=ex.carb*n;});
+  extKcal=Math.round(extKcal);extProt=Math.round(extProt*10)/10;extFat=Math.round(extFat*10)/10;extCarb=Math.round(extCarb*10)/10;
+
+  html += `<div class="section" style="--section-color:#34d399">
+    <div class="section-header">
+      <span class="section-emoji">➕</span>
+      <span class="section-title" style="color:#34d399">EXTRAS</span>
+      <span class="section-hint">toca + para añadir</span>
+    </div>
+    <div class="extras-grid">`;
+
+  EXTRAS.forEach(ex=>{
+    const n=ext[ex.id]||0;
+    html += `<div class="extra-card ${n>0?"active":""}">
+      <span style="font-size:19px;flex-shrink:0">${ex.emoji}</span>
+      <div class="extra-body">
+        <div class="extra-name">${ex.name}</div>
+        <div class="opt-macros">
+          <span class="opt-macro k">${ex.kcal}kcal</span>
+          <span class="opt-macro p">${ex.prot}g P</span>
+          <span class="opt-macro f">${ex.fat}g G</span>
+          <span class="opt-macro c">${ex.carb}g C</span>
+        </div>
+      </div>
+      <div class="extra-counter">
+        ${n>0?`<button class="extra-btn minus" onclick="changeExtra('${ex.id}',-1)">−</button>`:""}
+        <div class="extra-count">${n>0?n:""}</div>
+        <button class="extra-btn plus" onclick="changeExtra('${ex.id}',1)">+</button>
+      </div>
+    </div>`;
+  });
+
+  if(extKcal>0){
+    html += `<div class="extras-total">
+      <span class="extras-total-label">Total extras</span>
+      <div class="extras-total-vals">
+        <span class="extras-total-val" style="color:var(--green)">${extKcal}kcal</span>
+        <span class="extras-total-val" style="color:var(--blue)">${extProt}g P</span>
+        <span class="extras-total-val" style="color:var(--pink)">${extFat}g G</span>
+        <span class="extras-total-val" style="color:var(--amber)">${extCarb}g C</span>
+      </div>
+    </div>`;
+  }
+
+  html += `</div></div>`;
+  content.innerHTML = html;
+}
+
+// ─── INTERACTIONS ─────────────────────────────────────────────────────────────
+function toggleOpt(sectionKey,optId,group,isSingle){
+  const key = selKey();
+  if(!daySelections[key]) daySelections[key]={};
+  const sel = daySelections[key];
+  const menu = getMenu();
+
+  if(isSingle){
+    menu[sectionKey].cats.forEach(cat=>{
+      if((cat.group||sectionKey)===group) cat.opts.forEach(opt=>{delete sel[opt.id];});
+    });
+    if(!sel[optId]) sel[optId]=true;
+  } else {
+    sel[optId]=!sel[optId];
+    if(!sel[optId]) delete sel[optId];
+  }
+  ss("jf2_sel",daySelections);
+  renderContent();
+  updateDashboard();
+}
+
+function changeExtra(id,delta){
+  const key = extKey();
+  if(!dayExtras[key]) dayExtras[key]={};
+  const ext = dayExtras[key];
+  ext[id]=Math.max(0,(ext[id]||0)+delta);
+  if(ext[id]===0) delete ext[id];
+  ss("jf2_ext",dayExtras);
+  renderContent();
+  updateDashboard();
+}
+
+function setMode(mode){
+  currentMode=mode;
+  renderHeader();
+  renderDayStrip();
+  renderContent();
+  updateDashboard();
+}
+
+function switchDay(idx){
+  currentDay=idx;
+  renderHeader();
+  renderDayStrip();
+  renderContent();
+  updateDashboard();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function resetDay(){
+  if(confirm("¿Reiniciar la selección de hoy?")){
+    daySelections[selKey()]={};
+    dayExtras[extKey()]={};
+    ss("jf2_sel",daySelections);
+    ss("jf2_ext",dayExtras);
+    renderContent();
+    updateDashboard();
+  }
+}
+
+// ─── SERVICE WORKER REGISTRATION ─────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderHeader();
+renderDayStrip();
+renderContent();
+updateDashboard();
+</script>
+</body>
+</html>
