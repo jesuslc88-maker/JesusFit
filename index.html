@@ -220,18 +220,13 @@ const TARGETS = {
 // ─── MENU DATA — NORMAL MODE ──────────────────────────────────────────────────
 const MENU_NORMAL = {
   desayuno:{label:"DESAYUNO",emoji:"🌅",color:"#f5a623",singleSelect:true,cats:[{label:"Elige UNA opción:",opts:[
-    {id:"DA",name:"3 huevos + 1 tostada pan integral (30g) + plátano (120g)",kcal:304,prot:14,fat:10,carb:41},
-    {id:"DB",name:"3 huevos + 1 tostada pan integral (30g) + manzana (150g)",kcal:274,prot:14,fat:10,carb:30},
-    {id:"DC",name:"3 huevos + jamón york (50g) + plátano (120g)",kcal:288,prot:20,fat:11,carb:29},
-    {id:"DD",name:"Yogur líquido (265g) + plátano (120g) + corn flakes (30g)",kcal:390,prot:28,fat:2,carb:65},
-    {id:"DE",name:"Yogur líquido (265g) + manzana (150g) + corn flakes (30g)",kcal:360,prot:28,fat:2,carb:52},
-    {id:"DF",name:"Yogur líquido (265g) + plátano (120g)",kcal:282,prot:26,fat:2,carb:41},
+    {id:"DA",name:"3 huevos (165g crudo)",kcal:236,prot:21,fat:16,carb:1},
+    {id:"DB",name:"Yogur líquido proteico (265g)",kcal:175,prot:25,fat:2,carb:13},
+    {id:"DC",name:"2 tostadas pan normal + jamón serrano + tomate triturado",kcal:290,prot:16,fat:7,carb:36},
   ]}]},
   media:{label:"MEDIA MAÑANA",emoji:"☕",color:"#a06dfa",singleSelect:true,cats:[{label:"Elige UNA opción:",opts:[
-    {id:"MA",name:"Yogur líquido (265g) + manzana (150g)",kcal:253,prot:25,fat:2,carb:34},
-    {id:"MB",name:"Yogur líquido (265g) + plátano (120g)",kcal:282,prot:26,fat:2,carb:41},
-    {id:"MC",name:"Yogur líquido (265g) solo",kcal:175,prot:25,fat:2,carb:13},
-    {id:"MD",name:"2 huevos duros + manzana (150g)",kcal:218,prot:13,fat:10,carb:14},
+    {id:"MA",name:"Yogur líquido (265g)",kcal:175,prot:25,fat:2,carb:13},
+    {id:"MB",name:"2 huevos duros",kcal:158,prot:13,fat:11,carb:0},
   ]}]},
   comida:{label:"COMIDA",emoji:"🍽️",color:"#4da6ff",singleSelect:false,
     cats:[
@@ -256,13 +251,12 @@ const MENU_NORMAL = {
   },
   post:{label:"POST-ENTRENO / MERIENDA",emoji:"💪",color:"#2ecc8a",singleSelect:true,cats:[
     {label:"Días de entrenamiento:",opts:[
-      {id:"PA",name:"Whey 1 scoop + Creatina 5g + plátano (90g)",kcal:200,prot:25,fat:2,carb:24},
-      {id:"PB",name:"Whey 1 scoop + Creatina 5g + manzana (150g)",kcal:198,prot:25,fat:2,carb:22},
-      {id:"PC",name:"Whey 1 scoop + Creatina 5g (solo agua)",kcal:120,prot:24,fat:2,carb:3},
+      {id:"PA",name:"Whey 1 scoop + Creatina 5g (agua)",kcal:120,prot:24,fat:2,carb:3},
+      {id:"PB",name:"Whey 1.5 scoops + Creatina 5g (agua)",kcal:180,prot:36,fat:3,carb:4},
     ]},
     {label:"Días de descanso:",opts:[
-      {id:"PD",name:"Whey 1 scoop + Creatina 5g + plátano (90g)",kcal:200,prot:25,fat:2,carb:24},
-      {id:"PE",name:"Yogur líquido (265g) + manzana (150g)",kcal:253,prot:25,fat:2,carb:34},
+      {id:"PC",name:"Whey 1 scoop + Creatina 5g (agua)",kcal:120,prot:24,fat:2,carb:3},
+      {id:"PD",name:"Whey 1.5 scoops + Creatina 5g (agua)",kcal:180,prot:36,fat:3,carb:4},
     ]},
   ]},
   cena:{label:"CENA",emoji:"🌙",color:"#fa6d9a",singleSelect:false,
@@ -293,17 +287,15 @@ const MENU_NORMAL = {
 // Higher protein, lower carbs, smaller portions
 const MENU_DEFICIT = {
   desayuno:{label:"DESAYUNO",emoji:"🌅",color:"#ff6b35",singleSelect:true,cats:[{label:"Elige UNA opción (porciones reducidas):",opts:[
-    {id:"DA",name:"3 huevos + jamón york (50g) + manzana (150g)",kcal:252,prot:20,fat:11,carb:16,deficit:true},
-    {id:"DB",name:"3 huevos + jamón york (50g) — sin fruta",kcal:181,prot:19,fat:11,carb:1,deficit:true},
-    {id:"DC",name:"Yogur líquido (265g) + manzana (150g)",kcal:253,prot:25,fat:2,carb:34,deficit:true},
-    {id:"DD",name:"Yogur líquido (265g) + plátano (90g)",kcal:255,prot:25,fat:2,carb:35,deficit:true},
-    {id:"DE",name:"4 huevos + jamón york (50g)",kcal:265,prot:33,fat:15,carb:1,deficit:true},
+    {id:"DA",name:"3 huevos (165g crudo)",kcal:236,prot:21,fat:16,carb:1,deficit:true},
+    {id:"DB",name:"Yogur líquido (265g)",kcal:175,prot:25,fat:2,carb:13,deficit:true},
+    {id:"DC",name:"2 tostadas pan normal + jamón serrano + tomate triturado",kcal:290,prot:16,fat:7,carb:36,deficit:true},
+    {id:"DD",name:"4 huevos (220g crudo)",kcal:314,prot:28,fat:21,carb:1,deficit:true},
   ]}]},
   media:{label:"MEDIA MAÑANA",emoji:"☕",color:"#ff8c42",singleSelect:true,cats:[{label:"Elige UNA opción (alta proteína):",opts:[
-    {id:"MA",name:"Yogur líquido (265g) + manzana (150g)",kcal:253,prot:25,fat:2,carb:34,deficit:true},
-    {id:"MB",name:"Yogur líquido (265g) solo",kcal:175,prot:25,fat:2,carb:13,deficit:true},
-    {id:"MC",name:"2 huevos duros + jamón york (30g)",kcal:188,prot:20,fat:11,carb:1,deficit:true},
-    {id:"MD",name:"Atún 1 lata (80g) + manzana (150g)",kcal:158,prot:21,fat:1,carb:14,deficit:true},
+    {id:"MA",name:"Yogur líquido (265g)",kcal:175,prot:25,fat:2,carb:13,deficit:true},
+    {id:"MB",name:"2 huevos duros",kcal:158,prot:13,fat:11,carb:0,deficit:true},
+    {id:"MC",name:"Atún 1 lata (80g escurrido)",kcal:80,prot:18,fat:1,carb:0,deficit:true},
   ]}]},
   comida:{label:"COMIDA",emoji:"🍽️",color:"#ff6b35",singleSelect:false,
     cats:[
@@ -325,13 +317,12 @@ const MENU_DEFICIT = {
   },
   post:{label:"POST-ENTRENO / MERIENDA",emoji:"💪",color:"#2ecc8a",singleSelect:true,cats:[
     {label:"Días de entrenamiento (alta proteína):",opts:[
-      {id:"PA",name:"Whey 1 scoop + Creatina 5g + manzana (150g)",kcal:198,prot:25,fat:2,carb:22,deficit:true},
-      {id:"PB",name:"Whey 1 scoop + Creatina 5g (solo agua)",kcal:120,prot:24,fat:2,carb:3,deficit:true},
-      {id:"PC",name:"Whey 1.5 scoops + Creatina 5g (agua)",kcal:180,prot:36,fat:3,carb:4,deficit:true},
+      {id:"PA",name:"Whey 1 scoop + Creatina 5g (agua)",kcal:120,prot:24,fat:2,carb:3,deficit:true},
+      {id:"PB",name:"Whey 1.5 scoops + Creatina 5g (agua)",kcal:180,prot:36,fat:3,carb:4,deficit:true},
     ]},
     {label:"Días de descanso:",opts:[
-      {id:"PD",name:"Whey 1 scoop + Creatina 5g (agua)",kcal:120,prot:24,fat:2,carb:3,deficit:true},
-      {id:"PE",name:"Yogur líquido (265g) solo",kcal:175,prot:25,fat:2,carb:13,deficit:true},
+      {id:"PC",name:"Whey 1 scoop + Creatina 5g (agua)",kcal:120,prot:24,fat:2,carb:3,deficit:true},
+      {id:"PD",name:"Whey 1.5 scoops + Creatina 5g (agua)",kcal:180,prot:36,fat:3,carb:4,deficit:true},
     ]},
   ]},
   cena:{label:"CENA",emoji:"🌙",color:"#fa6d9a",singleSelect:false,
@@ -356,22 +347,24 @@ const MENU_DEFICIT = {
 
 // ─── EXTRAS ──────────────────────────────────────────────────────────────────
 const EXTRAS = [
-  {id:"EX1", name:"Vaso leche semidesnatada (200ml)",         kcal:92,  prot:6.4,fat:3.2,carb:9.4, emoji:"🥛"},
-  {id:"EX2", name:"Aguacate (100g)",                           kcal:160, prot:2.0,fat:15.0,carb:2.0,emoji:"🥑"},
-  {id:"EX3", name:"Aguacate (50g — medio pequeño)",            kcal:80,  prot:1.0,fat:7.5,carb:1.0, emoji:"🥑"},
-  {id:"EX4", name:"Aceite de oliva — 1 cda (10ml)",            kcal:88,  prot:0.0,fat:10.0,carb:0.0,emoji:"🫒"},
-  {id:"EX5", name:"Tomate tamizado (100g)",                    kcal:35,  prot:1.4,fat:0.2,carb:6.6, emoji:"🍅"},
-  {id:"EX6", name:"Salsa albahaca datterino (100g)",           kcal:34,  prot:1.1,fat:0.5,carb:5.8, emoji:"🍅"},
-  {id:"EX7", name:"Nueces al natural (30g — puñado)",          kcal:196, prot:4.6,fat:19.5,carb:1.2,emoji:"🌰"},
-  {id:"EX8", name:"Nueces al natural (15g — puñado pequeño)", kcal:98,  prot:2.3,fat:9.8,carb:0.6, emoji:"🌰"},
-  {id:"EX9", name:"Vinagre de Módena (15ml — chorrito)",       kcal:18,  prot:0.1,fat:0.0,carb:4.2, emoji:"🍶"},
-  {id:"EX10",name:"Café con leche (100ml leche semidenat.)",   kcal:46,  prot:3.2,fat:1.6,carb:4.7, emoji:"☕"},
-  {id:"EX11",name:"Queso rallado (20g)",                       kcal:76,  prot:5.4,fat:6.0,carb:0.2, emoji:"🧀"},
-  {id:"EX12",name:"Almendras (20g — puñado)",                  kcal:116, prot:4.2,fat:10.0,carb:2.2,emoji:"🫘"},
-  {id:"EX13",name:"Plátano extra (120g)",                      kcal:107, prot:1.3,fat:0.3,carb:27.6,emoji:"🍌"},
-  {id:"EX14",name:"Manzana extra (150g)",                      kcal:78,  prot:0.5,fat:0.3,carb:21.0,emoji:"🍎"},
-  {id:"EX15",name:"Pan integral extra (1 rebanada 30g)",       kcal:66,  prot:2.5,fat:0.8,carb:12.0,emoji:"🍞"},
-  {id:"EX16",name:"Huevo extra (1 ud 55g crudo)",              kcal:79,  prot:6.9,fat:5.2,carb:0.4, emoji:"🥚"},
+  {id:"EX1", name:"Vaso leche semidesnatada (200ml)",          kcal:92,  prot:6.4, fat:3.2, carb:9.4, emoji:"🥛"},
+  {id:"EX3", name:"Aguacate (50g — medio pequeño)",             kcal:80,  prot:1.0, fat:7.5, carb:1.0, emoji:"🥑"},
+  {id:"EX4", name:"Aceite de oliva — 1 cda (10ml)",             kcal:88,  prot:0.0, fat:10.0, carb:0.0, emoji:"🫒"},
+  {id:"EX5", name:"Tomate tamizado (100g)",                     kcal:35,  prot:1.4, fat:0.2, carb:6.6, emoji:"🍅"},
+  {id:"EX8", name:"Nueces al natural (15g — puñado pequeño)",   kcal:98,  prot:2.3, fat:9.8, carb:0.6, emoji:"🌰"},
+  {id:"EX9", name:"Vinagre de Módena (15ml — chorrito)",        kcal:18,  prot:0.1, fat:0.0, carb:4.2, emoji:"🍶"},
+  {id:"EX10",name:"Café con leche (100ml leche semidenat.)",    kcal:46,  prot:3.2, fat:1.6, carb:4.7, emoji:"☕"},
+  {id:"EX11",name:"Queso rallado (20g)",                        kcal:76,  prot:5.4, fat:6.0, carb:0.2, emoji:"🧀"},
+  {id:"EX12",name:"Almendras (20g — puñado)",                   kcal:116, prot:4.2, fat:10.0, carb:2.2, emoji:"🫘"},
+  {id:"EX13",name:"Plátano (120g)",                             kcal:107, prot:1.3, fat:0.3, carb:27.6, emoji:"🍌"},
+  {id:"EX14",name:"Manzana (150g)",                             kcal:78,  prot:0.5, fat:0.3, carb:21.0, emoji:"🍎"},
+  {id:"EX15",name:"Pan integral (1 rebanada 30g)",              kcal:66,  prot:2.5, fat:0.8, carb:12.0, emoji:"🍞"},
+  {id:"EX16",name:"Huevo extra (1 ud 55g crudo)",               kcal:79,  prot:6.9, fat:5.2, carb:0.4, emoji:"🥚"},
+  {id:"EX17",name:"Loncha jamón serrano (20g aprox)",           kcal:53,  prot:7.0, fat:3.0, carb:0.0, emoji:"🥩"},
+  {id:"EX18",name:"Loncha pechuga de pavo 96% (15g aprox)",     kcal:17,  prot:3.4, fat:0.2, carb:0.2, emoji:"🦃"},
+  {id:"EX19",name:"Frijoles negros (100g)",                     kcal:45,  prot:4.0, fat:1.0, carb:5.0, emoji:"🫘"},
+  {id:"EX20",name:"Noodles (100g)",                             kcal:81,  prot:2.0, fat:3.0, carb:11.0, emoji:"🍜"},
+  {id:"EX21",name:"Tercio Mahou (330ml)",                       kcal:162, prot:1.0, fat:0.0, carb:13.0, emoji:"🍺"},
 ];
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
